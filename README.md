@@ -12,7 +12,7 @@ Built by [Eventimio](https://eventimio.ai) for [@eventimio.ai](https://www.insta
   Optional opener message with a button, followers-only gate, public reply variants, one language per automation (he/en/fr).
 - **Posts:** upload 1–10 images (carousel), caption, publish now or schedule (Israel time), and optionally attach a DM automation to the new post.
   Capped at `MAX_POSTS_PER_DAY` (10).
-- **Admin:** Hebrew, RTL, with a live phone preview. Behind Cloudflare Zero Trust (recommended: the Worker also verifies the Access JWT, so it stays closed even if the Access policy is removed) or a password.
+- **Admin:** Hebrew, RTL, with a live phone preview. Your brand: `BRAND_NAME`, plus an optional `BRAND_LOGO` and `BRAND_ICON`. Behind Cloudflare Zero Trust (recommended: the Worker also verifies the Access JWT, so it stays closed even if the Access policy is removed) or a password.
 
 ## Architecture
 

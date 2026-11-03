@@ -1,7 +1,7 @@
 /**
  * Persistence for settings and automations (D1). Callers get plain objects back; SQL stays here.
  */
-import { nowSec } from './util.js';
+import { nowSec, brandAssets } from './util.js';
 
 /** Editable automation fields, in the order the form and the table share. */
 export const RULE_FIELDS = [
@@ -21,6 +21,7 @@ export async function loadAccount(env) {
   for (const { key, value } of results) saved[key] = value;
   return {
     ...saved, token: env.IG_ACCESS_TOKEN || '', ig_user_id: env.IG_USER_ID || '', brand: env.BRAND_NAME || 'Instagram',
+    brandLogo: brandAssets(env).logo, brandIcon: brandAssets(env).icon,
   };
 }
 

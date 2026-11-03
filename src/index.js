@@ -15,13 +15,16 @@ import { postPage } from './postpage.js';
 import {
   uploadImage, serveImage, createPost, cancelPost, listPosts, postsToday, publishDue, purgeMedia,
 } from './publisher.js';
-import { constantTimeEqual, htmlResponse, nowSec } from './util.js';
+import { brandAssets, constantTimeEqual, htmlResponse, nowSec } from './util.js';
+
+/** An HTML page whose CSP also allows the configured brand logo and icon. */
+const page = (env, html) => htmlResponse(html, 200, { imgOrigins: brandAssets(env).origins });
 
 const PUBLIC_ROUTES = [
   ['GET', '/webhook', (req, env, ctx, url) => handshake(url, env.VERIFY_TOKEN)],
   ['POST', '/webhook', receiveWebhook],
-  ['GET', '/privacy', (req, env) => htmlResponse(privacyPage(env))],
-  ['GET', '/data-deletion', (req, env) => htmlResponse(deletionPage(env))],
+  ['GET', '/privacy', (req, env) => page(env, privacyPage(env))],
+  ['GET', '/data-deletion', (req, env) => page(env, deletionPage(env))],
 ];
 
 const ADMIN_ROUTES = [
@@ -131,7 +134,7 @@ async function showAutomations(url, env) {
   }
   const editId = Number(url.searchParams.get('edit')) || null;
   const editing = editId ? rules.find((r) => r.id === editId) || null : null;
-  return htmlResponse(adminPage({
+  return page(env, adminPage({
     s: account, rules, recent, sentByRule, pending, media, mediaError, editing, msg: url.searchParams.get('msg'),
   }));
 }
@@ -189,7 +192,7 @@ async function checkConnection(env) {
 
 async function showPosts(url, env) {
   const [account, posts, today] = await Promise.all([store.loadAccount(env), listPosts(env), postsToday(env)]);
-  return htmlResponse(postPage({
+  return page(env, postPage({
     s: account, posts, today, cap: Number(env.MAX_POSTS_PER_DAY || 10),
     canPublish: Boolean(env.IG_PUBLISH_TOKEN && env.PUBLIC_BASE_URL), msg: url.searchParams.get('msg'),
   }));

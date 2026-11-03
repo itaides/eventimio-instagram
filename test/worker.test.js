@@ -370,3 +370,39 @@ test('admin: a cross-site POST is refused even without an Origin header', async 
   }), env, { waitUntil() {} });
   assert.equal(res.status, 403);
 });
+
+test('branding: BRAND_LOGO/BRAND_ICON show the logo and widen img-src; unsafe values are ignored', async () => {
+  env.ADMIN_PASSWORD = 'pw';
+  const get = async (path) => {
+    const res = await worker.fetch(new Request(`https://ig.example.com${path}`, { headers: auth }), env, { waitUntil() {} });
+    return { html: await res.text(), csp: res.headers.get('Content-Security-Policy') };
+  };
+
+  let { html } = await get('/admin');
+  assert.match(html, /<span class="top__brand">/); // no logo configured: the name as text
+
+  env.BRAND_LOGO = 'https://cdn.brand.example/logo.svg';
+  env.BRAND_ICON = 'https://cdn.brand.example/icon.svg';
+  let csp;
+  ({ html, csp } = await get('/admin'));
+  assert.match(html, /<img class="top__logo" src="https:\/\/cdn\.brand\.example\/logo\.svg"/);
+  assert.match(html, /<link rel="icon" href="https:\/\/cdn\.brand\.example\/icon\.svg">/);
+  assert.match(csp, /img-src [^;]*https:\/\/cdn\.brand\.example/);
+  ({ html } = await get('/privacy'));
+  assert.match(html, /class="brand-logo" src="https:\/\/cdn\.brand\.example\/logo\.svg"/);
+
+  env.BRAND_LOGO = '/brand/logo.svg'; // a site path: fine for the admin, skipped on public pages
+  ({ html } = await get('/admin'));
+  assert.match(html, /src="\/brand\/logo\.svg"/);
+  ({ html } = await get('/privacy'));
+  assert.ok(!html.includes('/brand/logo.svg'));
+
+  for (const bad of ['javascript:alert(1)', '//evil.example/x.svg', 'http://plain.example/x.svg', 'https://x.example/a" onerror="x']) {
+    env.BRAND_LOGO = bad;
+    ({ html, csp } = await get('/admin'));
+    assert.match(html, /<span class="top__brand">/, bad);
+    assert.ok(!csp.includes('evil') && !csp.includes('plain.example'), bad);
+  }
+  delete env.BRAND_LOGO;
+  delete env.BRAND_ICON;
+});

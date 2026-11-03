@@ -3,7 +3,7 @@
  * our audience. Facts here must match the code: what the webhook receives, what `sends` keeps, and
  * the 90-day `forgetOld` retention.
  */
-import { esc } from './util.js';
+import { esc, brandAssets } from './util.js';
 
 const RETENTION_DAYS = 90;
 const DELETION_DAYS = 7;
@@ -19,6 +19,7 @@ const STYLE = `
   .legal-head { padding-block-start: 20px; }
   .legal { padding-block: 8px 64px; }
   .brand { font-weight: 800; font-size: 26px; letter-spacing: -0.02em; color: #4b2861; }
+  .brand-logo { block-size: 32px; inline-size: auto; }
   .legal article + article { margin-block-start: 48px; padding-block-start: 16px; border-block-start: 1px solid var(--line); }
   h1 { font-size: clamp(26px, 5vw, 34px); line-height: 1.2; margin-block: 24px 8px; text-wrap: balance; }
   h2 { font-size: 19px; margin-block: 28px 4px; }
@@ -30,19 +31,26 @@ const STYLE = `
   a:focus-visible { outline: 3px solid #4a93de; outline-offset: 2px; border-radius: 4px; }
 `;
 
-/** @param {{title: string, brand: string, english: string, hebrew: string}} p */
-function legalPage({ title, brand, english, hebrew }) {
+/**
+ * Only https brand images are used here: site paths point into /public, which Zero Trust guards.
+ * @param {{title: string, brand: string, english: string, hebrew: string, env: object}} p
+ */
+function legalPage({ title, brand, english, hebrew, env }) {
+  const { logo, icon } = brandAssets(env);
+  const external = (u) => (u.startsWith('https://') ? u : '');
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title} · ${brand}</title>
-<link rel="icon" href="data:,">
+<link rel="icon" href="${esc(external(icon)) || 'data:,'}">
 <style>${STYLE}</style>
 </head>
 <body>
-<header class="legal-head"><span class="brand">${brand}</span></header>
+<header class="legal-head">${external(logo)
+  ? `<img class="brand-logo" src="${esc(logo)}" alt="${brand}" height="32">`
+  : `<span class="brand">${brand}</span>`}</header>
 <main class="legal">
   <article lang="en">${english}</article>
   <article lang="he" dir="rtl">${hebrew}</article>
@@ -59,6 +67,7 @@ export function privacyPage(env) {
   return legalPage({
     title: 'Privacy Policy',
     brand,
+    env,
     english: `
     <h1>Privacy Policy</h1>
     <p class="lede">How ${brand}'s Instagram auto-reply tool handles your information.</p>
@@ -106,6 +115,7 @@ export function deletionPage(env) {
   return legalPage({
     title: 'Data Deletion',
     brand,
+    env,
     english: `
     <h1>Delete your data</h1>
     <ol class="steps">

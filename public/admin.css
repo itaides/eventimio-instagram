@@ -14,6 +14,7 @@ a { color: var(--candy-dark); }
 .top { background: #fff; border-bottom: 1px solid var(--line); }
 .top__in { max-width: 1240px; margin: 0 auto; padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
 .top__brand { font-weight: 800; font-size: 20px; letter-spacing: -0.01em; color: var(--navy); }
+.top__logo { block-size: 30px; inline-size: auto; }
 .top__app { font-size: 18px; color: var(--muted); border-inline-start: 1px solid var(--line); padding-inline-start: 16px; }
 .top__grow { flex-grow: 1; }
 .chip { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 6px 14px; font-size: 15px; background: var(--navy-soft); }
