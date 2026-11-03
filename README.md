@@ -4,6 +4,8 @@ A self-hosted alternative to ManyChat-style tools: someone comments a keyword on
 It runs on Meta's official Instagram API as one Cloudflare Worker, with no servers and nothing third-party in your DMs; it fits in Cloudflare's free tier.
 Built by [Eventimio](https://eventimio.ai) for [@eventimio.ai](https://www.instagram.com/eventimio.ai/), and shared as is.
 
+![The automation editor next to its live phone preview](docs/admin.jpg)
+
 **Setup:** [SETUP.md](SETUP.md) (about an hour, mostly in Meta's dashboards). **For the people who write the automations (Hebrew):** [GUIDE.he.md](GUIDE.he.md).
 
 ## What it does
