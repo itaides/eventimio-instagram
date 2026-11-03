@@ -4,7 +4,7 @@ A self-hosted alternative to ManyChat-style tools: someone comments a keyword on
 It runs on Meta's official Instagram API as one Cloudflare Worker, with no servers and nothing third-party in your DMs; it fits in Cloudflare's free tier.
 Built by [Eventimio](https://eventimio.ai) for [@eventimio.ai](https://www.instagram.com/eventimio.ai/), and shared as is.
 
-<p align="center"><img src="docs/launch.gif" alt="Comment a keyword, get the link in a DM: comments, story replies and DMs, on Instagram's official API" width="600"></p>
+<p align="center"><img src="docs/demo.gif" alt="Someone comments GUIDE on a reel and gets the link in a DM a few seconds later" width="600"></p>
 
 ![The automation editor next to its live phone preview](docs/admin.jpg)
 
