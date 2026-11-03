@@ -36,8 +36,6 @@ The admin is protected by Cloudflare Access, and the Worker verifies the Access 
 - Bypass application on the paths Meta and Instagram must reach: `/webhook`, `/privacy`,
   `/data-deletion` and `/media/` (staged post images that Meta downloads).
 - Put the team domain and the application AUD in `ACCESS_TEAM` and `ACCESS_AUD`.
-- If a WAF rule challenges bots, exempt this host. Meta's crawler (`facebookexternalhit`) and the
-  webhook client cannot solve challenges, and Meta's settings will not save.
 
 No Zero Trust? Leave `ACCESS_TEAM` and `ACCESS_AUD` empty and set a long random `ADMIN_PASSWORD`
 secret: the admin then asks for it (HTTP Basic auth, over HTTPS only). Zero Trust is stronger:

@@ -70,7 +70,6 @@ npx wrangler d1 execute instagram-dm --remote --command "SELECT source,status,er
 
 **Gotchas we hit:**
 - **Zero Trust email code:** Access matches the email exactly. A phone that auto-capitalises the first letter gets "account does not have access".
-- **WAF:** a bot challenge on your zone blocks Meta's servers (webhook sender and URL checker). Exempt the bot's host.
 - **Background time limit:** work after a response has ~30s. Carousel child containers are therefore created in parallel.
 - **Tokens:** generate them from a portfolio system user, not the app dashboard (see [SETUP.md](SETUP.md) step 4).
 
