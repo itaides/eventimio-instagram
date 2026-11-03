@@ -22,18 +22,32 @@ export const nowSec = () => Math.floor(Date.now() / 1000);
 /** Page images: our own, Meta's CDNs (post thumbnails), and in-browser previews of picked files. */
 const IMG_SRC = "'self' https://*.cdninstagram.com https://*.fbcdn.net blob: data:";
 
+/** An https URL or a site path (/brand/logo.svg); anything else is ignored. */
+const assetUrl = (value) => (/^(https:\/\/[^\s"'<>]+|\/(?!\/)[^\s"'<>]*)$/.test(value || '') ? value : '');
+
+/**
+ * Optional branding from config: BRAND_LOGO (header image; the brand name shows as text without it)
+ * and BRAND_ICON (favicon). Returns the image origins the CSP must allow for them.
+ */
+export function brandAssets(env) {
+  const logo = assetUrl(env.BRAND_LOGO);
+  const icon = assetUrl(env.BRAND_ICON);
+  const origins = [...new Set([logo, icon].filter((u) => u.startsWith('https://')).map((u) => new URL(u).origin))];
+  return { logo, icon, origins };
+}
+
 /**
  * An HTML response with a strict CSP. Each response gets a fresh nonce, stamped on our own inline
  * <script> and <style> tags here; user text is escaped, so it can never carry a tag that gets one.
  */
-export function htmlResponse(body, status = 200) {
+export function htmlResponse(body, status = 200, { imgOrigins = [] } = {}) {
   const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
   const html = body.replace(/<(script|style)>/g, `<$1 nonce="${nonce}">`);
   const csp = [
     "default-src 'none'",
     `script-src 'self' 'nonce-${nonce}'`,
     `style-src 'self' 'nonce-${nonce}'`,
-    `img-src ${IMG_SRC}`,
+    `img-src ${[IMG_SRC, ...imgOrigins].join(' ')}`,
     "font-src 'self'",
     "connect-src 'self'",
     "form-action 'self'",

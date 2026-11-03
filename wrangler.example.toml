@@ -36,6 +36,10 @@ MAX_POSTS_PER_DAY = "10"
 # Public origin of this Worker; Meta downloads staged post images from /media/<uuid>.jpg
 PUBLIC_BASE_URL = "https://ig.example.com"
 BRAND_NAME = "Your Brand"
+# Optional: header logo and favicon, as an https URL or a path under public/. Without a logo the
+# header shows BRAND_NAME as text. The privacy pages only use https URLs (public/ sits behind Zero Trust).
+BRAND_LOGO = ""
+BRAND_ICON = ""
 CONTACT_EMAIL = "privacy@example.com"
 # Cloudflare Zero Trust (recommended): the admin then requires a valid Access token for this app.
 # Leave both empty to use a password instead (ADMIN_PASSWORD secret, HTTP Basic auth over HTTPS).

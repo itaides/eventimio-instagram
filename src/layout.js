@@ -20,7 +20,7 @@ export function shell({ title, s, pending = 0, active }) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)} · ${esc(s.brand)}</title>
-<link rel="icon" href="/icon.svg">
+<link rel="icon" href="${esc(s.brandIcon || '/icon.svg')}">
 <link rel="preload" href="/fonts/heebo-hebrew.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts.css">
 <link rel="stylesheet" href="/admin.css">
@@ -29,7 +29,9 @@ export function shell({ title, s, pending = 0, active }) {
 <body>
 <header class="top">
   <div class="top__in">
-    <span class="top__brand">${esc(s.brand)}</span>
+    ${s.brandLogo
+      ? `<img class="top__logo" src="${esc(s.brandLogo)}" alt="${esc(s.brand)}">`
+      : `<span class="top__brand">${esc(s.brand)}</span>`}
     <nav class="tabs" aria-label="ניווט">
       ${TABS.map((t) => `<a href="${t.href}"${t.id === active ? ' aria-current="page"' : ''}>${t.label}</a>`).join('')}
     </nav>
