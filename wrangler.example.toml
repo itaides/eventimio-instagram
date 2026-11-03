@@ -1,0 +1,54 @@
+# Copy to wrangler.toml (gitignored) and fill in your values. SETUP.md walks through each one.
+name = "instagram-dm"
+main = "src/index.js"
+workers_dev = false
+routes = [{ pattern = "ig.example.com", custom_domain = true }]
+compatibility_date = "2026-10-01"
+
+# Every 5 minutes: send queued messages and publish due posts; hourly cleanup rides along
+[triggers]
+crons = ["*/5 * * * *"]
+
+# Staged post images (deleted 7 days after publish)
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "instagram-dm-media"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "instagram-dm"
+database_id = "<from: npx wrangler d1 create instagram-dm>"
+migrations_dir = "migrations"
+
+[vars]
+# Meta Graph API version; match the one shown in your app's webhook settings
+GRAPH_VERSION = "v26.0"
+# Facebook Login for Business ("Unified login"); new Meta apps can't use graph.instagram.com
+GRAPH_HOST = "graph.facebook.com"
+# Your Instagram professional account ID
+IG_USER_ID = "<instagram account id>"
+# Optional linked Page ID; leave empty when webhooks are switched on per account in the app dashboard
+PAGE_ID = ""
+# Max DMs per hour (conservative, to stay clear of Meta rate limits)
+MAX_PER_HOUR = "150"
+# Posts per Israel calendar day from the admin (Meta allows more; this is your own cap)
+MAX_POSTS_PER_DAY = "10"
+# Public origin of this Worker; Meta downloads staged post images from /media/<uuid>.jpg
+PUBLIC_BASE_URL = "https://ig.example.com"
+BRAND_NAME = "Your Brand"
+CONTACT_EMAIL = "privacy@example.com"
+# Cloudflare Zero Trust (recommended): the admin then requires a valid Access token for this app.
+# Leave both empty to use a password instead (ADMIN_PASSWORD secret, HTTP Basic auth over HTTPS).
+ACCESS_TEAM = ""
+ACCESS_AUD = ""
+
+# Secrets (set with `npx wrangler secret put <NAME>`, never here):
+#   IG_ACCESS_TOKEN  - non-expiring system-user token for messages and comments
+#   IG_APP_SECRET    - the Meta app secret (App settings > Basic); verifies webhook signatures
+#   IG_PUBLISH_TOKEN - separate token with instagram_content_publish; posting is off without it
+#   VERIFY_TOKEN     - random string, also pasted into the Meta webhook settings
+#   ADMIN_PASSWORD   - only when Zero Trust is not used
+
+# Admin stylesheet, script and fonts
+[assets]
+directory = "./public"
